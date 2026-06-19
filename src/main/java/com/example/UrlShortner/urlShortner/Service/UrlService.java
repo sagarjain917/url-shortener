@@ -9,13 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.example.UrlShortner.common.Cache.CacheKeys;
 import com.example.UrlShortner.urlShortner.Dto.ShortenRequest;
 import com.example.UrlShortner.urlShortner.Model.Url;
 import com.example.UrlShortner.urlShortner.Model.UrlAnalytic;
 import com.example.UrlShortner.urlShortner.Repository.UrlAnalyticRepository;
 import com.example.UrlShortner.urlShortner.Repository.UrlRepository;
 import com.example.UrlShortner.urlShortner.Service.cache.CacheService;
-import com.example.UrlShortner.urlShortner.cache.CacheKeys;
 import com.example.UrlShortner.urlShortner.exeption.RequestFailedException;
 import com.example.UrlShortner.urlShortner.exeption.UrlExpiredException;
 import com.example.UrlShortner.urlShortner.exeption.UrlNotFoundException;
@@ -32,7 +32,7 @@ import lombok.AllArgsConstructor;
 public class UrlService {
   private final UrlAnalyticRepository urlAnalyticRepository;
   private final UrlRepository urlRepository;
-  private final RandomNumber randomNumber;
+  private final GenerateShortCode generateShortCode;
   private final CacheService cacheService;
 
   private static final Logger log = LoggerFactory.getLogger(UrlService.class);
@@ -74,7 +74,7 @@ public class UrlService {
   @Transactional
   public String saveShortUrl(ShortenRequest request, User user) {
 
-    String shortenUrl = randomNumber.number();
+    String shortenUrl = generateShortCode.number();
 
     Url url = Url.builder()
         .originalUrl(request.originalUrl())

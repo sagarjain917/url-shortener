@@ -1,4 +1,4 @@
-package com.example.UrlShortner.urlShortner.cache;
+package com.example.UrlShortner.common.Cache;
 
 import org.springframework.stereotype.Component;
 

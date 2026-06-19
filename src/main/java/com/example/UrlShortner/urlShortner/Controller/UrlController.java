@@ -28,11 +28,10 @@ import lombok.AllArgsConstructor;
 public class UrlController{
   
   private final UrlService urlService;
-  private final User user;
   private final PaginationService paginationService;
 
   @PostMapping("/shorten")
-  public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request){
+  public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request, User user){
     
     String shortUrl = urlService.shortUrlService(request, user);
     
@@ -64,7 +63,10 @@ public class UrlController{
     int page,
 
     @RequestParam(defaultValue = "10")
-    int size
+    int size,
+
+    User user
+    
   ){
 
     Page<ResponseDto> urls = paginationService.paginateUrl(page, size, user);

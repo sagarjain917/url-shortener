@@ -1,4 +1,4 @@
-package com.example.UrlShortner.urlShortner.cache;
+package com.example.UrlShortner.common.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

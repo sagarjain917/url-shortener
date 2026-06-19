@@ -5,8 +5,7 @@ import java.security.SecureRandom;
 import org.springframework.stereotype.Service;
 
 @Service
-public class RandomNumber {
-  
+public class GenerateShortCode {
   private static final String KEY = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-";
   private static final int LENGTH = 7;
   private static final SecureRandom secureRandom = new SecureRandom();
