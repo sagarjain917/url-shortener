@@ -50,8 +50,6 @@ public class Url {
   
   private LocalDateTime createdAt;
 
-  private LocalDateTime expiredAt;
-
   @PrePersist
   private void prePersist(){
     this.createdAt = LocalDateTime.now();

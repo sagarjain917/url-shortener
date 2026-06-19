@@ -1,7 +1,5 @@
 package com.example.UrlShortner.urlShortner.Service;
 
-import java.time.LocalDateTime;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
@@ -17,7 +15,6 @@ import com.example.UrlShortner.urlShortner.Repository.UrlAnalyticRepository;
 import com.example.UrlShortner.urlShortner.Repository.UrlRepository;
 import com.example.UrlShortner.urlShortner.Service.cache.CacheService;
 import com.example.UrlShortner.urlShortner.exeption.RequestFailedException;
-import com.example.UrlShortner.urlShortner.exeption.UrlExpiredException;
 import com.example.UrlShortner.urlShortner.exeption.UrlNotFoundException;
 import com.example.UrlShortner.user.User;
 
@@ -79,7 +76,6 @@ public class UrlService {
     Url url = Url.builder()
         .originalUrl(request.originalUrl())
         .shortUrl(shortenUrl)
-        .expiredAt(request.expiredAt())
         .user(user)
         .build();
 
@@ -93,6 +89,8 @@ public class UrlService {
 
     return shortenUrl;
   }
+
+  
 
   public String getOriginalUrl(String shortUrl) {
     
@@ -112,10 +110,6 @@ public class UrlService {
 
     Url url = urlRepository.findByShortUrl(shortUrl)
                 .orElseThrow(() -> new UrlNotFoundException("url not found"));
-    
-    if (url.getExpiredAt() != null && !url.getExpiredAt().isAfter(LocalDateTime.now())) {
-      throw new UrlExpiredException("Url is expired");
-    }
 
     try {
       cacheService.set(key, url.getOriginalUrl(), 300);
