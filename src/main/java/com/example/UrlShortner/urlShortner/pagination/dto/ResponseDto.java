@@ -6,6 +6,5 @@ public record ResponseDto(
   long userId,
   String shortUrl,
   String originalUrl,
-  LocalDateTime createdAt,
-  LocalDateTime expiredAt
+  LocalDateTime createdAt
 ) {}

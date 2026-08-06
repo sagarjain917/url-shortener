@@ -29,9 +29,8 @@ public class PaginationService {
           url.getUser().getId(),
           url.getOriginalUrl(),
           url.getShortUrl(),
-          url.getCreatedAt(),
-          url.getExpiredAt()
-        )
+          url.getCreatedAt()
+      )
     );
   }
 }

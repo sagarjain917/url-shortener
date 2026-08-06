@@ -33,7 +33,8 @@ public class UrlService {
   private final CacheService cacheService;
 
   private static final Logger log = LoggerFactory.getLogger(UrlService.class);
-
+  private static final int MAX_RETRIES = 3;
+  
   public String shortUrlService(ShortenRequest request, User user) {
 
     log.info(
@@ -49,11 +50,10 @@ public class UrlService {
       return existing.getShortUrl();
     }
 
-    for (int i = 0; i < 5; i++) {
+    for (int i = 0; i < MAX_RETRIES; i++) {
       try {
           return saveShortUrl(request, user);
       } catch (DuplicateKeyException e){
-        System.out.println(e.getMessage());
         log.warn(
   "Short URL collision occurred for originalUrl={}, retry={}", 
           request.originalUrl(),
