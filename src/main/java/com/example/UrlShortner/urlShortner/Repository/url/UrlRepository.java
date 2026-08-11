@@ -1,4 +1,4 @@
-package com.example.UrlShortner.urlShortner.Repository;
+package com.example.UrlShortner.urlShortner.Repository.url;
 
 
 import java.util.Optional;

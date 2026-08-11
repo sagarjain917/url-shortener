@@ -11,8 +11,8 @@ import com.example.UrlShortner.common.Cache.CacheKeys;
 import com.example.UrlShortner.urlShortner.Dto.ShortenRequest;
 import com.example.UrlShortner.urlShortner.Model.Url;
 import com.example.UrlShortner.urlShortner.Model.UrlAnalytic;
-import com.example.UrlShortner.urlShortner.Repository.UrlAnalyticRepository;
-import com.example.UrlShortner.urlShortner.Repository.UrlRepository;
+import com.example.UrlShortner.urlShortner.Repository.analytics.UrlAnalyticRepository;
+import com.example.UrlShortner.urlShortner.Repository.url.UrlRepository;
 import com.example.UrlShortner.urlShortner.Service.cache.CacheService;
 import com.example.UrlShortner.urlShortner.exeption.RequestFailedException;
 import com.example.UrlShortner.urlShortner.exeption.UrlNotFoundException;
@@ -55,7 +55,7 @@ public class UrlService {
           return saveShortUrl(request, user);
       } catch (DuplicateKeyException e){
         log.warn(
-  "Short URL collision occurred for originalUrl={}, retry={}", 
+          "Short URL collision occurred for originalUrl={}, retry={}", 
           request.originalUrl(),
           i + 1
         );

@@ -1,4 +1,4 @@
-package com.example.UrlShortner.common.config;
+package com.example.UrlShortner.common.config.redisconfig;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

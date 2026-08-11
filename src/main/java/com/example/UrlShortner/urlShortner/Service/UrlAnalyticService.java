@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.UrlShortner.urlShortner.Dto.response.AnalyticResponse;
-import com.example.UrlShortner.urlShortner.Repository.UrlAnalyticRepository;
+import com.example.UrlShortner.urlShortner.Repository.analytics.UrlAnalyticRepository;
 
 import lombok.AllArgsConstructor;
 

@@ -6,7 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.example.UrlShortner.urlShortner.Model.Url;
-import com.example.UrlShortner.urlShortner.Repository.UrlRepository;
+import com.example.UrlShortner.urlShortner.Repository.url.UrlRepository;
 import com.example.UrlShortner.urlShortner.pagination.dto.ResponseDto;
 import com.example.UrlShortner.user.User;
 
