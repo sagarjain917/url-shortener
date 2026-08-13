@@ -16,7 +16,6 @@ import com.example.UrlShortner.urlShortner.Repository.url.UrlRepository;
 import com.example.UrlShortner.urlShortner.Service.cache.CacheService;
 import com.example.UrlShortner.urlShortner.exeption.RequestFailedException;
 import com.example.UrlShortner.urlShortner.exeption.UrlNotFoundException;
-import com.example.UrlShortner.user.User;
 
 import eu.bitwalker.useragentutils.Browser;
 import eu.bitwalker.useragentutils.OperatingSystem;
@@ -35,7 +34,7 @@ public class UrlService {
   private static final Logger log = LoggerFactory.getLogger(UrlService.class);
   private static final int MAX_RETRIES = 3;
   
-  public String shortUrlService(ShortenRequest request, User user) {
+  public String shortUrlService(ShortenRequest request, long user) {
 
     log.info(
       "URL shorten request called shortUrlService={}",
@@ -43,7 +42,7 @@ public class UrlService {
     );
 
     Url existing = urlRepository
-        .findByUserAndOriginalUrl(user, request.originalUrl())
+        .findByUserIdAndOriginalUrl(user, request.originalUrl())
         .orElse(null);
 
     if (existing != null) {
@@ -69,14 +68,14 @@ public class UrlService {
 
 
   @Transactional
-  public String saveShortUrl(ShortenRequest request, User user) {
+  public String saveShortUrl(ShortenRequest request, long user) {
 
     String shortenUrl = generateShortCode.number();
 
     Url url = Url.builder()
         .originalUrl(request.originalUrl())
         .shortUrl(shortenUrl)
-        .user(user)
+        .userId(user)
         .build();
 
     urlRepository.save(url);

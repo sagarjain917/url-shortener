@@ -16,7 +16,6 @@ import com.example.UrlShortner.urlShortner.Dto.ShortenRequest;
 import com.example.UrlShortner.urlShortner.Service.UrlService;
 import com.example.UrlShortner.urlShortner.pagination.dto.ResponseDto;
 import com.example.UrlShortner.urlShortner.pagination.service.PaginationService;
-import com.example.UrlShortner.user.User;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -31,7 +30,7 @@ public class UrlController{
   private final PaginationService paginationService;
 
   @PostMapping("/shorten")
-  public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request, User user){
+  public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request, long user){
     
     String shortUrl = urlService.shortUrlService(request, user);
     
@@ -65,7 +64,7 @@ public class UrlController{
     @RequestParam(defaultValue = "10")
     int size,
 
-    User user
+    @RequestParam(required = false) long user
     
   ){
 
@@ -73,5 +72,4 @@ public class UrlController{
     
     return ResponseEntity.ok(urls);
   }
-
 }

@@ -38,9 +38,7 @@ public class Url {
   @GeneratedValue(strategy=GenerationType.IDENTITY)
   private long id;
 
-  @ManyToOne
-  @JoinColumn(name="user_id")
-  private User user;
+  private Long userId;
 
   @Column(nullable=false)
   private String originalUrl;

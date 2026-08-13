@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 import com.example.UrlShortner.urlShortner.Model.Url;
 import com.example.UrlShortner.urlShortner.Repository.url.UrlRepository;
 import com.example.UrlShortner.urlShortner.pagination.dto.ResponseDto;
-import com.example.UrlShortner.user.User;
 
 import lombok.AllArgsConstructor;
 
@@ -18,15 +17,15 @@ public class PaginationService {
 
   private final UrlRepository urlRepository; 
 
-  public Page<ResponseDto> paginateUrl(int page, int size, User user) {
+  public Page<ResponseDto> paginateUrl(int page, int size, long user) {
     
     Pageable pageable = PageRequest.of(page, size);
 
-    Page<Url> urls = urlRepository.findByUser(user, pageable);
+    Page<Url> urls = urlRepository.findByUserId(user, pageable);
   
     return urls.map(url -> 
         new ResponseDto(
-          url.getUser().getId(),
+          url.getUserId(),
           url.getOriginalUrl(),
           url.getShortUrl(),
           url.getCreatedAt()
