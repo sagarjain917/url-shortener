@@ -86,7 +86,13 @@ public class AnalyticsDatabaseConfig {
     DataSource dataSource,
     Map<String, ?>existingProperties){
 
-      return new LinkedHashMap<>(existingProperties);
+      Map<String, Object> properties = new LinkedHashMap<>(); 
+      
+      properties.putAll(existingProperties);
+
+      properties.put("hibernate.hbm2ddl.auto", "update");
+    
+      return properties;
   }
 
   @Bean

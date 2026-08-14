@@ -6,7 +6,6 @@ import java.util.function.Function;
 
 import javax.sql.DataSource;
 
-import org.hibernate.boot.model.source.spi.JpaCallbackSource;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -52,17 +51,17 @@ public class UrlDatabaseConfig {
 
   @Bean
   public LocalContainerEntityManagerFactoryBean urlEntityManagerFactory(
-      @Qualifier("url") DataSource dataSource,
-      @Qualifier("url") JpaProperties jpaProperties) {
-  
-      EntityManagerFactoryBuilder builder = 
-          urlEntityManagerFactoryBuilder(jpaProperties);
-      
-      return builder
-        .dataSource(urlDataSource())
-        .packages(Url.class)
-        .persistenceUnit("url")
-        .build();          
+    @Qualifier("url") DataSource dataSource,
+    @Qualifier("url") JpaProperties jpaProperties) {
+
+    EntityManagerFactoryBuilder builder = 
+        urlEntityManagerFactoryBuilder(jpaProperties);
+    
+    return builder
+      .dataSource(dataSource)
+      .packages(Url.class)
+      .persistenceUnit("url")
+      .build();
   }
 
   private EntityManagerFactoryBuilder urlEntityManagerFactoryBuilder(JpaProperties jpaProperties){
@@ -80,14 +79,19 @@ public class UrlDatabaseConfig {
       jpaPropertiesFactory, 
       null
     );
-
   }
 
   private Map<String, ?> urlJpaProperties(
-    DataSource dataSource, 
+    DataSource dataSource,
     Map<String, ?> existingProperties){
+
+      Map<String, Object> properties = new LinkedHashMap<>(); 
+      
+      properties.putAll(existingProperties);
+
+      properties.put("hibernate.hbm2ddl.auto", "update");
     
-      return new LinkedHashMap<>(existingProperties);
+      return properties;
   }
 
   private JpaVendorAdapter urlJpaVendorAdapter(JpaProperties jpaProperties){

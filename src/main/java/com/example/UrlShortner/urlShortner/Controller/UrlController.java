@@ -30,8 +30,11 @@ public class UrlController{
   private final PaginationService paginationService;
 
   @PostMapping("/shorten")
-  public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request, long user){
+  public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request){
     
+    // for production system, we will take userId from JWT token
+    long user = 1;
+
     String shortUrl = urlService.shortUrlService(request, user);
     
     return ResponseEntity.ok(shortUrl);
@@ -64,12 +67,16 @@ public class UrlController{
     @RequestParam(defaultValue = "10")
     int size,
 
-    @RequestParam(required = false) long user
-    
+    @RequestParam(required = false) long user    
   ){
 
     Page<ResponseDto> urls = paginationService.paginateUrl(page, size, user);
     
     return ResponseEntity.ok(urls);
+  }
+
+  @GetMapping("/server")
+  public String checkServer(){
+    return "server is running";
   }
 }
