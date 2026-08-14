@@ -36,7 +36,6 @@ public class UrlController{
     long user = 1;
 
     String shortUrl = urlService.shortUrlService(request, user);
-    
     return ResponseEntity.ok(shortUrl);
   }
 

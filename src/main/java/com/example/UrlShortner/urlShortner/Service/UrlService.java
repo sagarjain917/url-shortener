@@ -1,8 +1,15 @@
 package com.example.UrlShortner.urlShortner.Service;
 
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutorService;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -89,8 +96,6 @@ public class UrlService {
     return shortenUrl;
   }
 
-  
-
   public String getOriginalUrl(String shortUrl) {
     
     String key = CacheKeys.url(shortUrl);
@@ -108,7 +113,7 @@ public class UrlService {
     }
 
     Url url = urlRepository.findByShortUrl(shortUrl)
-                .orElseThrow(() -> new UrlNotFoundException("url not found"));
+            .orElseThrow(() -> new UrlNotFoundException("url not found"));
 
     try {
       cacheService.set(key, url.getOriginalUrl(), 300);
@@ -116,7 +121,12 @@ public class UrlService {
       log.info("server crash={}", e.getMessage());
     }
 
+    urlObject(url);
     return url.getOriginalUrl();
+  }
+
+  private Url urlObject(Url url){
+    return url;
   }
   
   @Transactional
@@ -130,7 +140,7 @@ public class UrlService {
     cacheService.delete(CacheKeys.url(shortUrl));
   }
   
-  
+  @Async
   public void urlClickCount(String shortUrl, HttpServletRequest request){
 
     Url url = urlRepository.findByShortUrl(shortUrl)
