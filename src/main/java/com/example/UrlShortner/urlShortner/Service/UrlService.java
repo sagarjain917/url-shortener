@@ -1,15 +1,8 @@
 package com.example.UrlShortner.urlShortner.Service;
 
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.dao.DuplicateKeyException;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
@@ -17,23 +10,20 @@ import org.springframework.web.server.ResponseStatusException;
 import com.example.UrlShortner.common.Cache.CacheKeys;
 import com.example.UrlShortner.urlShortner.Dto.ShortenRequest;
 import com.example.UrlShortner.urlShortner.Model.Url;
-import com.example.UrlShortner.urlShortner.Model.UrlAnalytic;
-import com.example.UrlShortner.urlShortner.Repository.analytics.UrlAnalyticRepository;
 import com.example.UrlShortner.urlShortner.Repository.url.UrlRepository;
-import com.example.UrlShortner.urlShortner.Service.cache.CacheService;
+import com.example.UrlShortner.urlShortner.cache.CacheService;
 import com.example.UrlShortner.urlShortner.exeption.RequestFailedException;
 import com.example.UrlShortner.urlShortner.exeption.UrlNotFoundException;
+import com.example.UrlShortner.urlShortner.kafka.event.ClickCount;
+import com.example.UrlShortner.urlShortner.kafka.producer.ClickEventProducer;
 
-import eu.bitwalker.useragentutils.Browser;
-import eu.bitwalker.useragentutils.OperatingSystem;
-import eu.bitwalker.useragentutils.UserAgent;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 
 @Service
 @AllArgsConstructor
 public class UrlService {
-  private final UrlAnalyticRepository urlAnalyticRepository;
+  private final ClickEventProducer clickEventProducer;
   private final UrlRepository urlRepository;
   private final GenerateShortCode generateShortCode;
   private final CacheService cacheService;
@@ -121,12 +111,7 @@ public class UrlService {
       log.info("server crash={}", e.getMessage());
     }
 
-    urlObject(url);
     return url.getOriginalUrl();
-  }
-
-  private Url urlObject(Url url){
-    return url;
   }
   
   @Transactional
@@ -140,40 +125,28 @@ public class UrlService {
     cacheService.delete(CacheKeys.url(shortUrl));
   }
   
-  @Async
-  public void urlClickCount(String shortUrl, HttpServletRequest request){
-
-    Url url = urlRepository.findByShortUrl(shortUrl)
-                .orElseThrow(() -> new UrlNotFoundException("url not found"));
+  
+  public void publishClickEvent(String shortUrl, HttpServletRequest request){
     
     String ip = request.getHeader("X-Forwarded-For");
+    
     if (ip == null) {
       ip = request.getRemoteAddr();
     }
 
     String userAgentString = request.getHeader("User-Agent");
+    
     if (userAgentString == null) {
       userAgentString = "Unknown";
     }
 
-    UserAgent userAgent = UserAgent.parseUserAgentString(userAgentString);
+    ClickCount click = new ClickCount(
+      shortUrl,
+      ip,
+      userAgentString,
+      System.currentTimeMillis()
+    );
 
-    Browser browser = userAgent.getBrowser();
-    OperatingSystem os = userAgent.getOperatingSystem();
-
-    String browserName = browser.getName();
-    String osName = os.getName();
-    String deviceType = os.getDeviceType().getName();
-    
-    UrlAnalytic urlAnalytic =
-           UrlAnalytic.builder()
-            .url(url)
-            .os(osName)
-            .browser(browserName)
-            .country("india")
-            .device(deviceType)
-            .build();
-
-    urlAnalyticRepository.save(urlAnalytic);
+    clickEventProducer.publish(click);
   }
 }

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,7 +33,7 @@ public class UrlController{
   @PostMapping("/shorten")
   public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request){
     
-    // for production system, we will take userId from JWT token
+    // for production system, we will extract userId from JWT token
     long user = 1;
 
     String shortUrl = urlService.shortUrlService(request, user);
@@ -45,7 +46,7 @@ public class UrlController{
                         HttpServletRequest request) throws IOException
   {
     String original = urlService.getOriginalUrl(shortUrl);
-    urlService.urlClickCount(shortUrl, request);
+    urlService.publishClickEvent(shortUrl, request);
     response.sendRedirect(original);
   }
 

@@ -36,9 +36,7 @@ public class UrlAnalytic {
   @GeneratedValue(strategy=GenerationType.IDENTITY)
   private long id;
 
-  @ManyToOne(fetch=FetchType.LAZY)
-  @JoinColumn(name = "url_id")
-  private Url url;
+  private long urlId;
 
   private String os;
   

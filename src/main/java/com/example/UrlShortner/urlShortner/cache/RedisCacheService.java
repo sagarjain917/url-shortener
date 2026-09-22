@@ -1,4 +1,4 @@
-package com.example.UrlShortner.urlShortner.Service.cache;
+package com.example.UrlShortner.urlShortner.cache;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;

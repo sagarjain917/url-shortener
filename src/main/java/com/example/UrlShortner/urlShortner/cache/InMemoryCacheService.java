@@ -1,4 +1,4 @@
-package com.example.UrlShortner.urlShortner.Service.cache;
+package com.example.UrlShortner.urlShortner.cache;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

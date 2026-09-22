@@ -1,4 +1,4 @@
-package com.example.UrlShortner.urlShortner.Service.cache;
+package com.example.UrlShortner.urlShortner.cache;
 
 public interface CacheService {
   String get(String shortUrl);
