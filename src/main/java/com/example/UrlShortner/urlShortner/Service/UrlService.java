@@ -121,7 +121,6 @@ public class UrlService {
                 .orElseThrow(() -> new UrlNotFoundException("URL not found"));
 
     urlRepository.delete(url);
-  
     cacheService.delete(CacheKeys.url(shortUrl));
   }
   
