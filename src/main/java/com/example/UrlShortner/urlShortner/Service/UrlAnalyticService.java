@@ -5,7 +5,9 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 
 import com.example.UrlShortner.urlShortner.Dto.response.AnalyticResponse;
+import com.example.UrlShortner.urlShortner.Model.Url;
 import com.example.UrlShortner.urlShortner.Repository.analytics.UrlAnalyticRepository;
+import com.example.UrlShortner.urlShortner.Repository.url.UrlRepository;
 
 import lombok.AllArgsConstructor;
 
@@ -14,12 +16,19 @@ import lombok.AllArgsConstructor;
 public class UrlAnalyticService {
   
   private final UrlAnalyticRepository urlAnalyticRepo;
-
+  private final UrlRepository urlRepository;
+  
   public AnalyticResponse urlClickCount (String shortUrl){
-    List<Object[]> countryList = urlAnalyticRepo.countByCountry(shortUrl);
-    List<Object[]> browerList = urlAnalyticRepo.countByBrowser(shortUrl);
-    List<Object[]> osList = urlAnalyticRepo.countByOs(shortUrl);
-    List<Object[]> deviceList = urlAnalyticRepo.countByDevice(shortUrl);
+    
+    Url url = urlRepository.findByShortUrl(shortUrl)
+          .orElseThrow(() -> new RuntimeException("Url not found"));
+   
+    long urlId = url.getId();
+
+    List<Object[]> countryList = urlAnalyticRepo.countByCountry(urlId);
+    List<Object[]> browerList = urlAnalyticRepo.countByBrowser(urlId);
+    List<Object[]> osList = urlAnalyticRepo.countByOs(urlId);
+    List<Object[]> deviceList = urlAnalyticRepo.countByDevice(urlId);
 
     return new AnalyticResponse(
       countryList,

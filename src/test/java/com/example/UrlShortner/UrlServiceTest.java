@@ -137,7 +137,7 @@ class UrlServiceTest {
 
     assertThrows(
       UrlNotFoundException.class, 
-      () -> urlService.getOriginalUrl(null)
+      () -> urlService.getOriginalUrl("abc")
     );
   }
 
