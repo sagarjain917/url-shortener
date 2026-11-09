@@ -33,13 +33,15 @@ public class UrlService {
   
   public String shortUrlService(ShortenRequest request, long user) {
 
+    String originalUrl = request.originalUrl().trim();
+
     log.info(
       "URL shorten request called shortUrlService={}",
-      request.originalUrl()
+      originalUrl
     );
 
     Url existing = urlRepository
-        .findByUserIdAndOriginalUrl(user, request.originalUrl())
+        .findByUserIdAndOriginalUrl(user, originalUrl)
         .orElse(null);
 
     if (existing != null) {
@@ -48,7 +50,7 @@ public class UrlService {
 
     for (int i = 0; i < MAX_RETRIES; i++) {
       try {
-          return saveShortUrl(request, user);
+          return saveShortUrl(originalUrl, user);
       } catch (DuplicateKeyException e){
         log.warn(
           "Short URL collision occurred for originalUrl={}, retry={}", 
@@ -65,22 +67,23 @@ public class UrlService {
 
 
   @Transactional
-  public String saveShortUrl(ShortenRequest request, long user) {
+  public String saveShortUrl(String originalUrl, long user) {
 
     String shortenUrl = generateShortCode.number();
 
     Url url = Url.builder()
-        .originalUrl(request.originalUrl())
+        .originalUrl(originalUrl)
         .shortUrl(shortenUrl)
         .userId(user)
         .build();
-
+        
+    log.info("URL being saved: [{}]", originalUrl);
     urlRepository.save(url);
 
     try{
-      cacheService.set(shortenUrl, request.originalUrl(), 300);
+      cacheService.set(shortenUrl, originalUrl, 300);
     } catch(Exception e){
-      log.error("cache failure for Url={}", request.originalUrl());
+      log.error("cache failure for Url={}", originalUrl);
     }
 
     return shortenUrl;
@@ -99,13 +102,17 @@ public class UrlService {
     }
 
     if(cacheUrl != null){
+      log.info("Redis returned: [{}]", cacheUrl);
       return cacheUrl;
     }
 
     Url url = urlRepository.findByShortUrl(shortUrl)
             .orElseThrow(() -> new UrlNotFoundException("url not found"));
 
+    log.info("MySQL returned: [{}]", url.getOriginalUrl());
+
     try {
+      log.info("Saving to Redis: [{}]", url.getOriginalUrl());
       cacheService.set(key, url.getOriginalUrl(), 300);
     } catch (ResponseStatusException e){
       log.info("server crash={}", e.getMessage());

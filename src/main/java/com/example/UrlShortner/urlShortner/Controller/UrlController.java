@@ -2,6 +2,9 @@ package com.example.UrlShortner.urlShortner.Controller;
 
 import java.io.IOException;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,6 +32,8 @@ public class UrlController{
   private final UrlService urlService;
   private final PaginationService paginationService;
 
+  private static final Logger log = LoggerFactory.getLogger(UrlService.class);
+
   @PostMapping("/shorten")
   public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request){
     
@@ -45,6 +50,10 @@ public class UrlController{
                         HttpServletRequest request) throws IOException
   {
     String original = urlService.getOriginalUrl(shortUrl);
+
+    log.info("Short URL received: [{}]", shortUrl);
+    log.info("Original URL before redirect: [{}]", original);
+
     urlService.publishClickEvent(shortUrl, request);
     response.sendRedirect(original);
   }
