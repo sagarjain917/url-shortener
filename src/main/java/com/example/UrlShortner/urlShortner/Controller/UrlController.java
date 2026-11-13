@@ -34,6 +34,11 @@ public class UrlController{
 
   private static final Logger log = LoggerFactory.getLogger(UrlService.class);
 
+  @GetMapping("/check")
+  public String check(){
+    return "system is working";
+  }
+
   @PostMapping("/shorten")
   public ResponseEntity<?> shortUrl(@Valid @RequestBody ShortenRequest request){
     
@@ -51,9 +56,12 @@ public class UrlController{
   {
     String original = urlService.getOriginalUrl(shortUrl);
 
-    log.info("Short URL received: [{}]", shortUrl);
-    log.info("Original URL before redirect: [{}]", original);
+    if (original != null) {
+      original = original.trim();
+    }
 
+    log.info("Original URL after trim: [{}]", original);
+    
     urlService.publishClickEvent(shortUrl, request);
     response.sendRedirect(original);
   }
